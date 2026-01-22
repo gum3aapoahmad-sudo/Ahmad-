@@ -1,11 +1,14 @@
-
 import { GoogleGenAI, Type, Modality } from "@google/genai";
 
-// Initialize AI Client
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Initialize AI Client lazily to prevent top-level crashes if process is undefined
+const getAiClient = () => {
+  const apiKey = typeof process !== 'undefined' ? process.env.API_KEY : '';
+  return new GoogleGenAI({ apiKey });
+};
 
 export async function chatWithGenie(history: { role: string; parts: string }[], message: string) {
   try {
+    const ai = getAiClient();
     const chat = ai.chats.create({
       model: "gemini-3-flash-preview",
       config: {
@@ -37,6 +40,7 @@ export async function generateMarketingIdea(
   tone: string = "Luxurious"
 ) {
   try {
+    const ai = getAiClient();
     const prompt = `
       بصفتك خبير تسويق رقمي في السوق السوري، قم بإنشاء فكرة إعلان جذابة.
       اسم المشروع: ${businessName}
@@ -82,6 +86,7 @@ export async function generateMarketingIdea(
 // Feature: Fast AI responses using Flash Lite
 export async function generateQuickDescription(serviceName: string, category: string) {
   try {
+    const ai = getAiClient();
     const response = await ai.models.generateContent({
       model: 'gemini-flash-lite-latest',
       contents: `اكتب وصفاً احترافياً وجذاباً وقصيراً (أقل من 300 حرف) باللغة العربية لخدمة بعنوان "${serviceName}" تندرج تحت تصنيف "${category}".`,
@@ -96,6 +101,7 @@ export async function generateQuickDescription(serviceName: string, category: st
 // Feature: Google Search Grounding for Market Trends
 export async function getMarketTrends(category: string) {
   try {
+    const ai = getAiClient();
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: `ما هي أحدث الاتجاهات والخدمات المطلوبة حالياً في سوريا بخصوص "${category}"؟ أعطني 3 نقاط رئيسية مختصرة.`,
@@ -122,6 +128,7 @@ export async function getMarketTrends(category: string) {
 
 export async function generateAdImage(serviceName: string, adText: string, tone: string = "Luxurious") {
   try {
+    const ai = getAiClient();
     let visualStyle = "dark luxury aesthetic with gold accents and high-end lighting";
     if (tone === "Youthful") visualStyle = "vibrant neon cyberpunk aesthetic with energetic colors and modern motion blur";
     if (tone === "Professional") visualStyle = "clean corporate minimalist aesthetic with soft blues, whites, and sharp focus";
@@ -159,6 +166,7 @@ export async function generateAdImage(serviceName: string, adText: string, tone:
 
 export async function editImageWithAI(base64Image: string, mimeType: string, editPrompt: string) {
   try {
+    const ai = getAiClient();
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
       contents: {
@@ -196,6 +204,7 @@ export async function editImageWithAI(base64Image: string, mimeType: string, edi
 
 export async function generateSpeech(textToSpeak: string) {
   try {
+    const ai = getAiClient();
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash-preview-tts",
       contents: [{ parts: [{ text: `بلهجة عربية فخمة ومحترفة، اقرأ النص التالي بوضوح وتأثير: ${textToSpeak}` }] }],
@@ -219,6 +228,7 @@ export async function generateSpeech(textToSpeak: string) {
 
 export async function analyzeDesign(base64Image: string, mimeType: string) {
   try {
+    const ai = getAiClient();
     const systemPrompt = `أنت الخبير الإبداعي لموقع 'حلبي للخدمات الرقمية'. حلل التصميم المرفق في الصورة بأسلوب ملهم واحترافي. 
     استخدم التفكير العميق لتحليل العناصر البصرية: (الألوان، التكوين، الإضاءة، والرسالة الإبداعية).
     ركز على تقديم نصائح عملية للتحسين، ثم اربط هذه النصائح بذكاء بخدمات 'حلبي للخدمات'.

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { generateMarketingIdea, generateAdImage, generateSpeech, getMarketTrends } from '../services/gemini';
 import { SERVICES } from '../constants';
@@ -87,8 +86,10 @@ const GeminiAssistant: React.FC<Props> = ({ theme }) => {
       if (base64Audio) {
         const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
         const binaryString = atob(base64Audio);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+        const len = binaryString.length;
+        // Ensure even byte length for Int16Array
+        const bytes = new Uint8Array(len % 2 === 0 ? len : len + 1);
+        for (let i = 0; i < len; i++) bytes[i] = binaryString.charCodeAt(i);
 
         const dataInt16 = new Int16Array(bytes.buffer);
         const buffer = audioCtx.createBuffer(1, dataInt16.length, 24000);
