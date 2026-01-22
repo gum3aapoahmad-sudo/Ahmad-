@@ -1,51 +1,31 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 interface Props {
   theme?: 'dark' | 'light';
 }
 
-const HERO_IMAGES = [
-  // Aleppo Citadel / Old City
-  "https://images.unsplash.com/photo-1548018566-281b37b03697?q=80&w=2000", 
-  // Umayyad Mosque / Damascus Interior details
-  "https://images.unsplash.com/photo-1596489886366-22a0a9c68832?q=80&w=2000",
-  // Old Damascus House / Palace
-  "https://images.unsplash.com/photo-1555992336-fb0d29498b13?q=80&w=2000",
-  // Syrian Arch / History
-  "https://images.unsplash.com/photo-1628522365288-43d7350cb4a1?q=80&w=2000",
-  // Ancient Market / Souq
-  "https://images.unsplash.com/photo-1596489886326-7640237190b2?q=80&w=2000"
-];
-
 const Hero: React.FC<Props> = ({ theme }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % HERO_IMAGES.length);
-    }, 6000); // Change image every 6 seconds
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <section id="hero" className="relative h-screen min-h-[600px] flex items-center justify-center overflow-hidden transition-colors duration-500 group bg-black">
       
-      {/* 1. Cinematic 3D Slideshow Background */}
-      {HERO_IMAGES.map((img, index) => (
-        <div 
-          key={index}
-          className={`absolute inset-0 transition-opacity duration-[2000ms] ease-in-out ${index === currentImageIndex ? 'opacity-100' : 'opacity-0'}`}
+      {/* 1. Cinematic Video Background */}
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover scale-105"
+          style={{ filter: 'brightness(0.6) contrast(1.1) saturation(1.1)' }}
         >
-          <img
-            src={img}
-            alt={`Slide ${index}`}
-            className={`w-full h-full object-cover transition-transform duration-[10000ms] ease-linear ${index === currentImageIndex ? 'scale-110' : 'scale-100'}`}
-            style={{ filter: 'brightness(0.6) contrast(1.1)' }}
-          />
-        </div>
-      ))}
+          {/* Cinematic aerial footage resembling Aleppo Citadel/Ancient City */}
+          <source src="https://cdn.pixabay.com/video/2020/04/17/36465-412214476_large.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        {/* Subtle texture overlay for film grain effect */}
+        <div className="absolute inset-0 bg-black/10 mix-blend-multiply"></div>
+      </div>
 
       {/* Syrian Independence Flag Overlay (Green, White, Black with 3 Red Stars) */}
       <div className="absolute inset-0 z-10 flex flex-col opacity-20 pointer-events-none mix-blend-overlay">
